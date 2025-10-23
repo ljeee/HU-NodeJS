@@ -94,9 +94,65 @@ VALUES (
   'vendedor'
 );
 
+-- Insertar productos
 INSERT INTO products (code, name, description, price, stock) VALUES
   ('P-1001', 'Camiseta Básica', 'Camiseta 100% algodón, color blanco, talla única', 50000, 150),
   ('P-1002', 'Sudadera Capucha', 'Sudadera con capucha, forro interior suave, varios colores', 139600, 60),
   ('P-1003', 'Pantalón Chino', 'Pantalón chino corte slim, tejido elástico', 119960, 80),
   ('P-1004', 'Zapatos Urbanos', 'Zapatos urbanos de cuero sintético, suela antideslizante', 279800, 40),
   ('P-1005', 'Gorra Ajustable', 'Gorra con visera curva y cierre trasero ajustable', 39960, 200);
+
+-- Insertar customers
+INSERT INTO public.customers (id, name, email, phone, address, "createdAt", "updatedAt")
+VALUES
+  (1, 'María Pérez',      'maria.perez@example.com',       '+34 600 111 001', 'Calle Mayor 1, Madrid', NOW(), NOW()),
+  (2, 'Juan Gómez',       'juan.gomez@example.com',        '+34 600 111 002', 'C/ Alcalá 12, Madrid', NOW(), NOW()),
+  (3, 'Lucía Fernández',  'lucia.fernandez@example.com',  '+34 600 111 003', 'Av. de América 45, Madrid', NOW(), NOW()),
+  (4, 'Carlos Ruiz',      'carlos.ruiz@example.com',      '+34 600 111 004', 'Paseo de la Castellana 20, Madrid', NOW(), NOW()),
+  (5, 'Ana Torres',       'ana.torres@example.com',       '+34 600 111 005', 'Calle del Prado 8, Madrid', NOW(), NOW()),
+  (6, 'Pedro Sánchez',    'pedro.sanchez@example.com',    '+34 600 111 006', 'Plaza Mayor 3, Madrid', NOW(), NOW()),
+  (7, 'Sofía Morales',    'sofia.morales@example.com',    '+34 600 111 007', 'C/ Serrano 25, Madrid', NOW(), NOW()),
+  (8, 'Miguel Ortega',    'miguel.ortega@example.com',    '+34 600 111 008', 'Ronda de Atocha 10, Madrid', NOW(), NOW()),
+  (9, 'Elena Castillo',   'elena.castillo@example.com',   '+34 600 111 009', 'C/ Fuencarral 50, Madrid', NOW(), NOW()),
+  (10,'Raúl Mendoza',     'raul.mendoza@example.com',     '+34 600 111 010', 'C/ Gran Vía 40, Madrid', NOW(), NOW());
+
+  
+-- Generar N órdenes para distintos customers 
+WITH chosen_customers AS (
+  SELECT id AS customer_id
+  FROM public.customers
+  ORDER BY id
+  LIMIT 5
+),
+-- Insertar orders y devolver id y customer_id
+new_orders AS (
+  INSERT INTO public.orders (customer_id, total, "createdAt", "updatedAt")
+  SELECT
+    customer_id,
+    0::numeric AS total,                   
+    NOW() AT TIME ZONE 'UTC' AS "createdAt",
+    NOW() AT TIME ZONE 'UTC' AS "updatedAt"
+  FROM chosen_customers
+  RETURNING id, customer_id
+),
+-- Para cada new_order, crear entre 1 y 3 order_details tomando productos aleatorios
+-- Usamos generate_series para generar 1..3 filas por order
+order_lines AS (
+  SELECT
+    no.id AS order_id,
+    p.id AS product_id,
+    ( (random() * 3)::int + 1 )::int AS quantity, -- cantidad aleatoria entre 1 y 4
+    p.price
+  FROM new_orders no
+  JOIN LATERAL (
+    SELECT id, price
+    FROM public.products
+    ORDER BY random()
+    LIMIT ( (random() * 2)::int + 1 )  -- 1..3 productos por orden (probabilístico)
+  ) p ON true
+)
+-- Insertar los detalles
+INSERT INTO public.order_details (order_id, product_id, quantity)
+SELECT order_id, product_id, quantity
+FROM order_lines
+RETURNING id, order_id, product_id, quantity;
