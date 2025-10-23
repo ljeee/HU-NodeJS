@@ -8,7 +8,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 connectDB();
+
 initModels(sequelize);
+
+import { router as authRouter } from './routes/auth.routes.js';
+app.use(authRouter);
 
 const port = 3000;
 app.listen(port, () => {
