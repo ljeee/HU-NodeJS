@@ -100,3 +100,16 @@ INSERT INTO products (code, name, description, price, stock) VALUES
   ('P-1003', 'Pantalón Chino', 'Pantalón chino corte slim, tejido elástico', 119960, 80),
   ('P-1004', 'Zapatos Urbanos', 'Zapatos urbanos de cuero sintético, suela antideslizante', 279800, 40),
   ('P-1005', 'Gorra Ajustable', 'Gorra con visera curva y cierre trasero ajustable', 39960, 200);
+
+INSERT INTO public.customers (id, name, email, phone, address, "createdAt", "updatedAt")
+VALUES
+  (1, 'María Pérez',      'maria.perez@example.com',       '+34 600 111 001', 'Calle Mayor 1, Madrid', NOW(), NOW()),
+  (2, 'Juan Gómez',       'juan.gomez@example.com',        '+34 600 111 002', 'C/ Alcalá 12, Madrid', NOW(), NOW()),
+  (3, 'Lucía Fernández',  'lucia.fernandez@example.com',  '+34 600 111 003', 'Av. de América 45, Madrid', NOW(), NOW()),
+  (4, 'Carlos Ruiz',      'carlos.ruiz@example.com',      '+34 600 111 004', 'Paseo de la Castellana 20, Madrid', NOW(), NOW()),
+  (5, 'Ana Torres',       'ana.torres@example.com',       '+34 600 111 005', 'Calle del Prado 8, Madrid', NOW(), NOW()),
+  (6, 'Pedro Sánchez',    'pedro.sanchez@example.com',    '+34 600 111 006', 'Plaza Mayor 3, Madrid', NOW(), NOW()),
+  (7, 'Sofía Morales',    'sofia.morales@example.com',    '+34 600 111 007', 'C/ Serrano 25, Madrid', NOW(), NOW()),
+  (8, 'Miguel Ortega',    'miguel.ortega@example.com',    '+34 600 111 008', 'Ronda de Atocha 10, Madrid', NOW(), NOW()),
+  (9, 'Elena Castillo',   'elena.castillo@example.com',   '+34 600 111 009', 'C/ Fuencarral 50, Madrid', NOW(), NOW()),
+  (10,'Raúl Mendoza',     'raul.mendoza@example.com',     '+34 600 111 010', 'C/ Gran Vía 40, Madrid', NOW(), NOW());

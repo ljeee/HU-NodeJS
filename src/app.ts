@@ -6,6 +6,7 @@ import { connectDB, sequelize } from './config/dbconect.js';
 import { router as authRouter } from './routes/auth.routes.js';
 import { router as productsRouter } from './routes/products.routes.js';
 import { router as customersRouter } from './routes/customers.routes.js';
+import { router as ordersRouter } from './routes/orders.routes.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './docs/swagger.js';
 
@@ -19,6 +20,7 @@ initModels(sequelize);
 app.use(authRouter);
 app.use(productsRouter);
 app.use(customersRouter);
+app.use(ordersRouter);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const port = 3000;
