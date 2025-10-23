@@ -65,7 +65,7 @@ export class customers extends Model<customersAttributes, customersCreationAttri
     sequelize,
     tableName: 'customers',
     schema: 'public',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "customers_pkey",
