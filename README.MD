@@ -71,7 +71,15 @@ The project uses PostgreSQL as the database. The initial database schema and see
 ## Deployment
 For production deployment, use the following command:
 ```
-docker-compose -f docker-compose.prod.yml up --build
+sudo docker ps -a
+sudo docker stop tin-app || true
+sudo docker rm -f tin-app || true
+
+# bring the project down cleanly
+docker compose down --remove-orphans
+# rebuild and up
+docker compose up --build -d
+docker compose logs -f
 ```
 
 ## Scripts
