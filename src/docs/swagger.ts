@@ -41,6 +41,25 @@ const options = {
           },
         },
       },
+      Order: {
+        type: 'object',
+        required: ['customer_id', 'items'],
+        properties: {
+          id: { type: 'integer', example: 1 },
+          customer_id: { type: 'integer', example: 1 },
+          total: { type: 'number', example: 1299.97 },
+          items: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                product_id: { type: 'integer', example: 2 },
+                quantity: { type: 'integer', example: 3 }
+              }
+            }
+          }
+        }
+      },
     },
     paths: {
       '/products': {
@@ -104,6 +123,109 @@ const options = {
             '400': { description: 'Bad request', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } },
           },
         },
+      },
+      '/orders': {
+        post: {
+          summary: 'Registrar pedido',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Order'
+                },
+                example: {
+                  customer_id: 1,
+                  items: [
+                    { product_id: 2, quantity: 3 },
+                    { product_id: 5, quantity: 1 }
+                  ]
+                }
+              }
+            }
+          },
+          responses: {
+            '201': {
+              description: 'Pedido creado',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Order' },
+                  example: {
+                    id: 10,
+                    customer_id: 1,
+                    total: 1299.97,
+                    items: [
+                      { product_id: 2, quantity: 3 },
+                      { product_id: 5, quantity: 1 }
+                    ]
+                  }
+                }
+              }
+            },
+            '400': {
+              description: 'Stock insuficiente',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                  example: { message: 'Insufficient stock for product P-001' }
+                }
+              }
+            },
+            '404': {
+              description: 'Producto no encontrado',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                  example: { message: 'Product 2 not found' }
+                }
+              }
+            },
+            '500': {
+              description: 'Error interno',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' }
+                }
+              }
+            }
+          }
+        },
+        get: {
+          summary: 'Consultar pedidos',
+          parameters: [
+            { name: 'customer_id', in: 'query', required: false, schema: { type: 'integer' }, example: 1 },
+            { name: 'product_id', in: 'query', required: false, schema: { type: 'integer' }, example: 2 }
+          ],
+          responses: {
+            '200': {
+              description: 'Listado de pedidos',
+              content: {
+                'application/json': {
+                  schema: { type: 'array', items: { $ref: '#/components/schemas/Order' } },
+                  example: [
+                    {
+                      id: 10,
+                      customer_id: 1,
+                      total: 1299.97,
+                      items: [
+                        { product_id: 2, quantity: 3 },
+                        { product_id: 5, quantity: 1 }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            '500': {
+              description: 'Error interno',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' }
+                }
+              }
+            }
+          }
+        }
       },
       '/customers/{id}': {
         get: {
