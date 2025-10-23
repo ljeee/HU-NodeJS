@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/25</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.42% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>5/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/5</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>22/25</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
@@ -87,9 +87,7 @@
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
 <a name='L24'></a><a href='#L24'>24</a>
-<a name='L25'></a><a href='#L25'>25</a>
-<a name='L26'></a><a href='#L26'>26</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L25'></a><a href='#L25'>25</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -109,22 +107,21 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { sequelize } from '../config/dbconect.js';
 import { initModels } from '../models/init-models.js';
 import type { customersAttributes, customersCreationAttributes } from '../models/customers.js';
 &nbsp;
-const models = initModels(sequelize);
-const { customers } = models;
-&nbsp;
-export const listCustomers = async () =&gt; customers.findAll();
-export const getCustomerById = <span class="fstat-no" title="function not covered" >async (id: number) =&gt; customers.findByPk(id);</span>
-export const createCustomer = async (data: customersCreationAttributes) =&gt; customers.create(data as customersAttributes);
+// Lazily acquire models so tests can mock init-models on demand
+const getModels = () =&gt; initModels(sequelize);
+export const listCustomers = async () =&gt; getModels().customers.findAll();
+export const getCustomerById = <span class="fstat-no" title="function not covered" >async (id: number) =&gt; getModels().customers.findByPk(id);</span>
+export const createCustomer = async (data: customersCreationAttributes) =&gt; getModels().customers.create(data as customersAttributes);
 export const updateCustomer = async (id: number, data: Partial&lt;customersAttributes&gt;) =&gt; {
-  const c = await customers.findByPk(id);
+  const c = await getModels().customers.findByPk(id);
   if (!c) {
     throw Object.assign(new Error('Customer not found'), { status: 404 });
   }
@@ -132,12 +129,12 @@ export const updateCustomer = async (id: number, data: Partial&lt;customersAttri
   return c;
 };
 export const deleteCustomer = async (id: number) =&gt; {
-  const c = await customers.findByPk(id);
-  if (!c) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
-<span class="cstat-no" title="statement not covered" >    throw Object.assign(new Error('Customer not found'), { status: 404 });</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+  const c = await getModels().customers.findByPk(id);
+  if (!c) {
+    throw Object.assign(new Error('Customer not found'), { status: 404 });
+  }
   await c.destroy();
-<span class="cstat-no" title="statement not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >};</span></span>
+};
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -145,7 +142,7 @@ export const deleteCustomer = async (id: number) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-23T10:55:27.705Z
+                at 2025-10-23T11:55:35.205Z
             </div>
         <script src="../prettify.js"></script>
         <script>
