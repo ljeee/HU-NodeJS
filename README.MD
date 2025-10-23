@@ -1,5 +1,7 @@
 # Project Documentation
 
+## Jeferson escudero Rua | Linus | NodeJS
+
 ## Overview
 This project is a web application built using Node.js and Express, with a PostgreSQL database managed through Sequelize. It follows a modular architecture, separating concerns into different directories for models, controllers, middleware, routes, and services.
 
@@ -26,8 +28,6 @@ tin
 ├── ecosystem.config.cjs      # PM2 process management configuration
 ├── .dockerignore              # Files to ignore when building the Docker image
 ├── .env                       # Environment variables for the application
-├── .env.prod                  # Production environment variables
-├── .env.example               # Example environment variables
 ├── package.json               # npm configuration file
 ├── tsconfig.json             # TypeScript configuration file
 ├── seeders.sql                # SQL commands for database setup
@@ -38,8 +38,7 @@ tin
 ## Getting Started
 1. **Clone the repository:**
    ```
-   git clone <repository-url>
-   cd tin
+   git clone https://github.com/ljeee/HU-NodeJS.git
    ```
 
 2. **Install dependencies:**
@@ -48,7 +47,12 @@ tin
    ```
 
 3. **Set up environment variables:**
-   Copy `.env.example` to `.env` and fill in the required values.
+   ```
+   DATABASE_URL="postgres://postgres.wdqvjllnbwobwpyyoppx:Jeferson1@aws-1-us-east-1.pooler.supabase.com:6543/postgres"
+   DB_USER=postgres.wdqvjllnbwobwpyyoppx
+   DB_PASSWORD=Jeferson1
+   DB_NAME=postgres
+   ```
 
 4. **Run the application:**
    For development:

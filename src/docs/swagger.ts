@@ -41,6 +41,22 @@ const options = {
           },
         },
       },
+      AuthLogin: {
+        type: 'object',
+        required: ['correo', 'password'],
+        properties: {
+          correo: { type: 'string', example: 'admin@email.com' },
+          password: { type: 'string', example: '12345' }
+        }
+      },
+      AuthResponse: {
+        type: 'object',
+        properties: {
+          user: { type: 'object', example: { correo: 'admin@email.com', nombre: 'Admin', rol: 'admin' } },
+          token: { type: 'string', example: 'jwt-token' },
+          refreshToken: { type: 'string', example: 'refresh-token' }
+        }
+      },
       Order: {
         type: 'object',
         required: ['customer_id', 'items'],
@@ -213,6 +229,52 @@ const options = {
                       ]
                     }
                   ]
+                }
+              }
+            },
+            '500': {
+              description: 'Error interno',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' }
+                }
+              }
+            }
+          }
+        }
+      },
+      '/login': {
+        post: {
+          summary: 'Login de usuario',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/AuthLogin' },
+                example: { correo: 'admin@email.com', password: '12345' }
+              }
+            }
+          },
+          responses: {
+            '200': {
+              description: 'Login exitoso',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/AuthResponse' },
+                  example: {
+                    user: { correo: 'admin@email.com', nombre: 'Admin', rol: 'admin' },
+                    token: 'jwt-token',
+                    refreshToken: 'refresh-token'
+                  }
+                }
+              }
+            },
+            '401': {
+              description: 'Credenciales inválidas',
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/Error' },
+                  example: { message: 'correo o password inválidos' }
                 }
               }
             },
