@@ -1,0 +1,17 @@
+# Ignore node_modules and build artifacts
+node_modules/
+dist/
+# Ignore environment variable files
+.env
+.env.prod
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
+# Ignore logs
+*.log
+# Ignore coverage reports
+coverage/
+# Ignore temporary files
+*.tmp
+*.temp
