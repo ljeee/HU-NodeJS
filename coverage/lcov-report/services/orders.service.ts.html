@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.03% </span>
+                <span class="strong">79.24% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>35/53</span>
+                <span class='fraction'>42/53</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">37.5% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/8</span>
+                <span class='fraction'>6/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.03% </span>
+                <span class="strong">79.24% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>35/53</span>
+                <span class='fraction'>42/53</span>
             </div>
         
             
@@ -131,24 +131,24 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -173,33 +173,33 @@
 import { initModels } from '../models/init-models.js';
 import type { ordersCreationAttributes } from '../models/orders.js';
 &nbsp;
-const models = initModels(sequelize);
-const { orders, order_details, products } = models;
+// Lazily acquire models to facilitate mocking in tests
+const getModels = () =&gt; initModels(sequelize);
 &nbsp;
 export const createOrder = async (data: { customer_id: number; items: Array&lt;{ product_id: number; quantity: number }&gt; }) =&gt; {
   // Validate stock for each item
   for (const item of data.items) {
-    const product = await products.findByPk(item.product_id);
+    const product = await getModels().products.findByPk(item.product_id);
     if (!product) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >      throw Object.assign(new Error(`Product ${item.product_id} not found`), { status: 404 });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
-    if (product.stock &lt; item.quantity) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
-<span class="cstat-no" title="statement not covered" >      throw Object.assign(new Error(`Insufficient stock for product ${product.code}`), { status: 400 });</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+    if (product.stock &lt; item.quantity) {
+      throw Object.assign(new Error(`Insufficient stock for product ${product.code}`), { status: 400 });
+    }
   }
   // Create order and details in a transaction
   return await sequelize.transaction(async (t) =&gt; {
-    const order = await orders.create({ customer_id: data.customer_id }, { transaction: t });
+    const order = await getModels().orders.create({ customer_id: data.customer_id } as ordersCreationAttributes, { transaction: t });
     let total = 0;
     for (const item of data.items) {
-  const product = await products.findByPk(item.product_id, { transaction: t });
+  const product = await getModels().products.findByPk(item.product_id, { transaction: t });
   if (!product) <span class="branch-0 cbranch-no" title="branch not covered" >throw Object.assign(new Error(`Product ${item.product_id} not found`), { status: 404 });</span>
-  await order_details.create({ order_id: order.id, product_id: item.product_id, quantity: item.quantity }, { transaction: t });
-<span class="cstat-no" title="statement not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >  await product.update({ stock: product.stock - item.quantity }, { transaction: t });</span></span>
-<span class="cstat-no" title="statement not covered" >  total += Number(product.price) * item.quantity;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    await order.update({ total }, { transaction: t });</span>
-<span class="cstat-no" title="statement not covered" >    return order;</span>
+  await getModels().order_details.create({ order_id: (order as any).id, product_id: item.product_id, quantity: item.quantity }, { transaction: t });
+  await (product as any).update({ stock: (product as any).stock - item.quantity }, { transaction: t });
+  total += Number(product.price) * item.quantity;
+    }
+    await (order as any).update({ total }, { transaction: t });
+    return order;
   });
 };
 &nbsp;
@@ -208,17 +208,17 @@ export const listOrders = async (filters: { customer_id?: number; product_id?: n
   if (filters.customer_id) where.customer_id = filters.customer_id;
   // If filtering by product, need to join order_details
   if (filters.product_id) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
-<span class="cstat-no" title="statement not covered" >    return orders.findAll({</span>
+<span class="cstat-no" title="statement not covered" >    return getModels().orders.findAll({</span>
 <span class="cstat-no" title="statement not covered" >      include: [{</span>
-<span class="cstat-no" title="statement not covered" >        model: order_details,</span>
+<span class="cstat-no" title="statement not covered" >        model: getModels().order_details,</span>
 <span class="cstat-no" title="statement not covered" >        as: 'order_details',</span>
 <span class="cstat-no" title="statement not covered" >        where: { product_id: filters.product_id },</span>
 <span class="cstat-no" title="statement not covered" >      }],</span>
 <span class="cstat-no" title="statement not covered" >      where,</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
-  return orders.findAll({
-    include: [{ model: order_details, as: 'order_details' }],
+  return getModels().orders.findAll({
+    include: [{ model: getModels().order_details, as: 'order_details' }],
     where,
   });
 };
@@ -229,7 +229,7 @@ export const listOrders = async (filters: { customer_id?: number; product_id?: n
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-23T10:55:27.705Z
+                at 2025-10-23T11:55:35.205Z
             </div>
         <script src="../prettify.js"></script>
         <script>
